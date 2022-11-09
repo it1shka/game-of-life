@@ -1,11 +1,14 @@
 public class Main {
 
     private static ArgumentReader arguments;
+    private static DisplayClasses.Display display;
     private static final int tick = 100;
 
     public static void main(String[] args) {
         try {
             arguments = new ArgumentReader(args);
+            final var displayMethod = arguments.next();
+            display = DisplayClasses.createDisplay(displayMethod);
             final var mode = arguments.next();
             switch (mode) {
                 case "random" -> runRandomGame();
@@ -32,30 +35,17 @@ public class Main {
         gameLoop(game);
     }
 
-    // helpful functions
-
     private static void gameLoop(final GameOfLife game) {
-        updateScreen(game);
         while (game.hasAliveCells()) {
+            display.draw(game);
             game.nextStep();
-            updateScreen(game);
+            try {
+                Thread.sleep(tick);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
         System.out.println("No living cells remaining");
-    }
-
-    private static void updateScreen(final GameOfLife game) {
-        try {
-            clearTerminal();
-            System.out.println(game);
-            Thread.sleep(tick);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    private static void clearTerminal() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
     }
 
 }

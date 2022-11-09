@@ -75,4 +75,7 @@ public class GameOfLife {
         return builder.toString();
     }
 
+    public boolean[][] getBoard() {
+        return board;
+    }
 }
